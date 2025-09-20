@@ -13,24 +13,39 @@
 - выход из программы
 
 ## Технологии:
-- PostgreSQL + JDBC
+- PostgreSQL + Spring JDBC + Hibernate
 - Maven
-- планируется подключение Spring + Hibernate, потом перевод проекта на Spring Boot
+- Spring Framework 
+- Hibernate ORM
 
 ## Структура проекта:
+```
 src/
 ├── main/
 │   ├── java/
-│   │   └── org.example/
-│   │       ├── Main.java (вызов функций, обработка ошибок try-catch, которые пробрасываются наверх из FinanceService и TransactionDao)
-│   │       ├── DatabaseConnection.java - подключение к БД
-│   │       ├── model/    
-│   │       │   └── Transaction.java - модель транзакции
-│   │       └── dao/   
-│   │       │   └── TransactionDao.java - работа с БД (все SQL запросы находятся там)
-│   │       └── Service/ - FinanceService.java (реализация функций)      
-│   └── resources/ - секретные данные для подключения к БД
-└── pom.xml    
+│   │   ├── model/
+│   │   │   └── Transaction.java
+│   │   ├── org.example.jdbc.dao/
+│   │   │   ├── Service/
+│   │   │   │   └── FinanceService.java
+│   │   │   ├── ConfigLoader.java
+│   │   │   ├── DatabaseConnection.java
+│   │   │   ├── Main.java
+│   │   │   ├── TestConnection.java
+│   │   │   └── TransactionDao.java
+│   │   └── spring/
+│   │       ├── AppConfig.java
+│   │       ├── FinanceServiceSpring.java
+│   │       ├── MainSpring.java
+│   │       └── TransactionDaoHibernate.java
+│   └── resources/
+│       ├── application.properties
+│       └── config.properties
+├── test/
+├── target/
+├── .gitignore
+└── pom.xml
+```
 
 ## Поля модели Transaction:
 - id
@@ -38,4 +53,4 @@ src/
 - type
 - category
 - description
-- date 
+- date

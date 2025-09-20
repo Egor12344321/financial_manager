@@ -13,7 +13,8 @@ config.properties
 *.iws
 *.iml
 *.ipr
-
+application.properties
+application.yml
 ### Eclipse ###
 .apt_generated
 .classpath
