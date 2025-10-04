@@ -18,11 +18,20 @@ public class FinanceService {
         transactionDao.save(transaction);
     }
     public void delTransaction() throws SQLException {
-        System.out.print("Введите номер транзакции, которую хотите удалить: ");
-        int del_id = scanner.nextInt();
-        scanner.nextLine();
-        transactionDao.deleteTransaction(del_id);
-        System.out.println("Операция удалена");
+        showTransactions();
+        while(true){
+            System.out.print("Введите номер транзакции, которую хотите удалить: ");
+            int del_id = scanner.nextInt();
+            scanner.nextLine();
+            if (transactionDao.findById(del_id) != null) {
+                transactionDao.deleteTransaction(del_id);
+                System.out.println("Операция удалена");
+                return;
+            } else {
+                System.out.println("Такой транзакции нет, выберите другую");
+            }
+        }
+
     }
     public void editTransaction() throws SQLException {
 

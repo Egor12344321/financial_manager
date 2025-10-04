@@ -8,6 +8,7 @@ import org.example.model.Transaction;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
@@ -78,8 +79,9 @@ public class Main {
         transaction.setType(typeChoice == 1 ? Transaction.TransactionType.INCOME : Transaction.TransactionType.EXPENSE);
         transaction.setCategory(getCategoryName(categoryChoice));
         transaction.setDescription(description);
-
+        transaction.setDate(LocalDateTime.now());
         service.addTransaction(transaction);
+
         System.out.println("Операция добавлена");
     }
 

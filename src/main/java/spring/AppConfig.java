@@ -44,7 +44,7 @@ public class AppConfig {
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource){
             LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
             sessionFactory.setDataSource(dataSource);
-            sessionFactory.setPackagesToScan("model");
+            sessionFactory.setPackagesToScan("org.example.model");
             sessionFactory.setHibernateProperties(hibernateProperties());
             return sessionFactory;
     }

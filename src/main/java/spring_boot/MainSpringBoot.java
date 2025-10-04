@@ -1,7 +1,9 @@
-package spring;
+package spring_boot;
 
-import org.example.model.Transaction;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -9,15 +11,22 @@ import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class MainSpring {
+@Component
+public class MainSpringBoot implements CommandLineRunner {
 
-    public static void main(String[] args) {
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(AppConfig.class);
-        Scanner scanner = new Scanner(System.in);
-        FinanceServiceSpring financeServiceSpring = context.getBean(FinanceServiceSpring.class);
+    @Autowired
+    FinanceServiceSpringBoot financeServiceSpringBoot;
+
+    private Scanner scanner = new Scanner(System.in);
+
+    @Override
+    public void run(String... args) throws Exception {
+        showMenu();
+    }
+
+    public void showMenu() {
         while (true) {
-            try{
+            try {
                 printMenu();
 
                 int choice = scanner.nextInt();
@@ -25,16 +34,15 @@ public class MainSpring {
 
                 try {
                     switch (choice) {
-                        case 1 -> financeServiceSpring.showBalance();
-                        case 2 -> addNewTransaction(financeServiceSpring, scanner);
-                        case 3 -> financeServiceSpring.showTransactions();
+                        case 1 -> financeServiceSpringBoot.showBalance();
+                        case 2 -> addNewTransaction(financeServiceSpringBoot, scanner);
+                        case 3 -> financeServiceSpringBoot.showTransaction();
                         case 4 -> {
-
-                            financeServiceSpring.editTransaction();
+                            financeServiceSpringBoot.editTransaction();
                         }
-                        case 5 -> financeServiceSpring.delTransaction();
-                        case 6 -> financeServiceSpring.showTransByDate();
-                        case 7 -> financeServiceSpring.categoryStats();
+                        case 5 -> financeServiceSpringBoot.delTransaction();
+                        case 6 -> financeServiceSpringBoot.showTransByDate();
+                        case 7 -> financeServiceSpringBoot.categoryStats();
                         case 8 -> {
                             System.out.println("Выход");
                             return;
@@ -51,8 +59,8 @@ public class MainSpring {
                 System.out.println("Произошла ошибка: " + e.getMessage());
             }
         }
-
     }
+
 
     private static void printMenu() {
         System.out.println("1. Показать текущий баланс");
@@ -66,31 +74,31 @@ public class MainSpring {
         System.out.print("Выберите действие: ");
     }
 
-    private static void addNewTransaction(FinanceServiceSpring financeServiceSpring, Scanner scanner) throws SQLException {
+    private static void addNewTransaction(FinanceServiceSpringBoot financeServiceSpringBoot, Scanner scanner) throws SQLException {
         System.out.print("Введите сумму: ");
         BigDecimal amount = scanner.nextBigDecimal();
         scanner.nextLine();
-
+    
         System.out.print("Тип (1 - Доход, 2 - Расход): ");
         int typeChoice = scanner.nextInt();
         scanner.nextLine();
-
+    
         System.out.println("Категории: 1-Продукты 2-Транспорт 3-Кафе 4-Зарплата");
         System.out.print("Выберите категорию: ");
         int categoryChoice = scanner.nextInt();
         scanner.nextLine();
-
+    
         System.out.print("Описание (не обязательно): ");
         String description = scanner.nextLine();
-
-        Transaction transaction = new Transaction();
+    
+        org.example.model.Transaction transaction = new org.example.model.Transaction();
         transaction.setAmount(amount);
-        transaction.setType(typeChoice == 1 ? Transaction.TransactionType.INCOME : Transaction.TransactionType.EXPENSE);
+        transaction.setType(typeChoice == 1 ? org.example.model.Transaction.TransactionType.INCOME : org.example.model.Transaction.TransactionType.EXPENSE);
         transaction.setCategory(getCategoryName(categoryChoice));
         transaction.setDescription(description);
         transaction.setDate(LocalDateTime.now());
 
-        financeServiceSpring.addTransaction(transaction);
+        financeServiceSpringBoot.createTransaction(transaction);
         System.out.println("Операция добавлена");
     }
 
@@ -103,6 +111,4 @@ public class MainSpring {
             default -> "Другое";
         };
     }
-
 }
-

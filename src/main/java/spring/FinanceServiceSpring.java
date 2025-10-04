@@ -1,6 +1,6 @@
 package spring;
 
-import model.Transaction;
+import org.example.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,20 +24,30 @@ public class FinanceServiceSpring {
         System.out.print("Текущий баланс: ");
         System.out.println(transactionDaoHibernate.getBalance());
     }
-    public void addTransaction(Transaction transaction) {
+    public void addTransaction(org.example.model.Transaction transaction) {
         transactionDaoHibernate.save(transaction);
     }
 
 
-    public void delTransaction(){
-        System.out.println("Введите номер (по полю id) транзакции, которую хотите удалить: ");
-        int id = scanner.nextInt();
-        transactionDaoHibernate.delete(id);
-        System.out.println("Транзакция удалена");
+    public void delTransaction() throws SQLException {
+        showTransactions();
+        while (true) {
+            System.out.println("Введите номер (по полю id) транзакции, которую хотите удалить: ");
+            int id = scanner.nextInt();
+            if (transactionDaoHibernate.findById(id) != null) {
+                transactionDaoHibernate.delete(id);
+                System.out.println("Транзакция удалена");
+                return;
+            } else {
+                System.out.println("Такой транзакции не существует");
+            }
+        }
     }
     public void showTransByDate() throws DateTimeParseException {
+        scanner.nextLine();
         System.out.print("Введите дату начала совершения транзакций (гггг-мм-дд): ");
         LocalDate start = LocalDate.parse(scanner.nextLine());
+
 
         System.out.print("Введите дату конца совершения транзакций (гггг-мм-дд): ");
         LocalDate end = LocalDate.parse(scanner.nextLine());
@@ -55,8 +65,21 @@ public class FinanceServiceSpring {
             System.out.println(summa);
         }
     }
-    public void editTransaction() {
-
+    public void categoryStats(){
+        System.out.println("Категория     Сумма");
+        Map<String, BigDecimal> stats = transactionDaoHibernate.getCategoryStats();
+        if (stats.isEmpty()){
+            System.out.println("У вас не было трат");
+        } else {
+            for (Map.Entry<String, BigDecimal> entry : stats.entrySet()) {
+                String key = entry.getKey();
+                BigDecimal value = entry.getValue();
+                System.out.printf("%-10s    %s\n", key, value);
+            }
+        }
+    }
+    public void editTransaction() throws SQLException {
+        showTransactions();
         System.out.println("Выберите транзакцию для редактирования (по полю Id): ");
         int id_tr = scanner.nextInt();
         scanner.nextLine();
@@ -132,9 +155,17 @@ public class FinanceServiceSpring {
 
 
             for (Transaction t : transactions) {
+                String date = "Нет даты";
+                if (t.getDate() != null){
+                    try {
+                        date = t.getDate().toLocalDate().toString();
+                    } catch (Exception e){
+                        date = "Ошибка даты";
+                    }
+                }
                 System.out.printf("%-6s  |%s | %-9.2f | %-7s | %-14s | %s\n",
                         t.getId(),
-                        t.getDate().toLocalDate(),
+                        date,
                         t.getAmount(),
                         t.getType(),
                         t.getCategory(),
